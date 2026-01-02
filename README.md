@@ -25,8 +25,8 @@ Inspired by platforms like **Google Meet**, **Zoom**, and **Discord Voice**, Vox
 Login → Online Users → Call → Video → Screen Share → End Call
 ````
 
-> 📌 You can add GIFs or screenshots here later for even more impact.
-![alt text](image.png)
+> 
+![Home Page](image.png)
 
 ---
 
