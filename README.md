@@ -26,6 +26,7 @@ Login → Online Users → Call → Video → Screen Share → End Call
 ````
 
 > 📌 You can add GIFs or screenshots here later for even more impact.
+![alt text](image.png)
 
 ---
 
