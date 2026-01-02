@@ -1,4 +1,4 @@
-````md
+
 <p align="center">
   <img src="https://readme-typing-svg.herokuapp.com?size=34&duration=3000&color=38BDF8&center=true&vCenter=true&width=700&lines=Voxera;Real-Time+Voice+%26+Video+Calling;WebRTC+%7C+Socket.IO;Built+for+Seamless+Communication" />
 </p>
