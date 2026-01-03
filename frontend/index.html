@@ -1,9 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <title>Voxera • Real-Time Calling</title>
+
+  <!-- FAVICONS -->
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon_io/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon_io/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon_io/favicon-16x16.png">
+  <link rel="manifest" href="favicon_io/site.webmanifest">
+  <link rel="shortcut icon" href="favicon_io/favicon.ico">
+
+  <meta name="theme-color" content="#020617">
+
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
   <!-- BACKGROUND DECOR -->
@@ -75,10 +89,11 @@
 
           <!-- CONTROLS -->
           <div id="callControls" class="controls" style="display:none;">
-            <button onclick="toggleMute()">🎤</button>
-            <button onclick="toggleScreen()">🖥️</button>
+            <button id="muteBtn" onclick="toggleMute()">🎤</button>
+            <button id="screenBtn" onclick="toggleScreen()">🖥️</button>
             <button class="end" onclick="endCall()">📞</button>
           </div>
+
 
         </section>
 

@@ -1,3 +1,5 @@
+let pendingOffer = null;
+
 const socket = io("http://localhost:3000");
 
 // 🔊 Sounds
@@ -14,7 +16,7 @@ let currentUser = "";
 let peerConnection = null;
 let localStream = null;
 let cameraStream = null;
-let caller = "";
+let connectedUser = "";
 
 let inCall = false;
 let isMuted = false;
@@ -87,7 +89,7 @@ socket.on("online-users", (users) => {
 });
 
 /* =====================
-   MEDIA (CAMERA + MIC)
+   MEDIA
 ===================== */
 async function getMedia() {
   if (!localStream) {
@@ -108,6 +110,7 @@ async function getMedia() {
 ===================== */
 function createPeerConnection(targetUser) {
   peerConnection = new RTCPeerConnection(config);
+  connectedUser = targetUser;
 
   localStream.getTracks().forEach(track =>
     peerConnection.addTrack(track, localStream)
@@ -116,36 +119,29 @@ function createPeerConnection(targetUser) {
   peerConnection.onicecandidate = (e) => {
     if (e.candidate) {
       socket.emit("webrtc-ice-candidate", {
-        to: targetUser,
+        to: connectedUser,
         candidate: e.candidate
       });
     }
   };
 
   peerConnection.ontrack = (e) => {
-    const remoteVideo = document.getElementById("remoteVideo");
-    remoteVideo.srcObject = e.streams[0];
-
-    if (!peerConnection._connectedSoundPlayed) {
-      callConnectSound.play().catch(() => {});
-      peerConnection._connectedSoundPlayed = true;
-      hideCallStatus(); // ✅ hide "Calling…" when connected
-    }
+    document.getElementById("remoteVideo").srcObject = e.streams[0];
+    callConnectSound.play().catch(() => {});
+    hideCallStatus();
   };
 }
 
 /* =====================
-   START CALL (CALLER)
+   START CALL
 ===================== */
 async function startCall(user) {
   if (inCall) return alert("Already in a call");
 
+  connectedUser = user;
   showCallStatus("Calling…");
 
-  socket.emit("call-user", {
-    from: currentUser,
-    to: user
-  });
+  socket.emit("call-user", { from: currentUser, to: user });
 
   await getMedia();
   createPeerConnection(user);
@@ -163,7 +159,7 @@ async function startCall(user) {
    INCOMING CALL
 ===================== */
 socket.on("incoming-call", async ({ from }) => {
-  caller = from;
+  connectedUser = from;
   showCallStatus("Incoming call…");
 
   const accept = confirm(`Incoming call from ${from}`);
@@ -174,21 +170,24 @@ socket.on("incoming-call", async ({ from }) => {
 
   await getMedia();
   createPeerConnection(from);
-
   showCallUI();
   inCall = true;
+
+  if (pendingOffer) {
+    await handleOffer(pendingOffer);
+    pendingOffer = null;
+  }
 });
 
 /* =====================
    OFFER / ANSWER
 ===================== */
 socket.on("webrtc-offer", async (offer) => {
-  await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
-
-  const answer = await peerConnection.createAnswer();
-  await peerConnection.setLocalDescription(answer);
-
-  socket.emit("webrtc-answer", { to: caller, answer });
+  if (!peerConnection) {
+    pendingOffer = offer;
+    return;
+  }
+  await handleOffer(offer);
 });
 
 socket.on("webrtc-answer", async (answer) => {
@@ -203,47 +202,45 @@ socket.on("webrtc-ice-candidate", async (candidate) => {
 });
 
 /* =====================
-   MUTE / UNMUTE
+   MUTE
 ===================== */
 function toggleMute() {
-  if (!localStream) return;
+  if (!peerConnection) return;
 
-  const track = localStream.getAudioTracks()[0];
+  const audioSender = peerConnection.getSenders()
+    .find(s => s.track && s.track.kind === "audio");
+
+  if (!audioSender) return;
+
   isMuted = !isMuted;
-  track.enabled = !isMuted;
+  audioSender.track.enabled = !isMuted;
 
-  document.getElementById("muteBtn").innerText =
-    isMuted ? "🎤 Unmute" : "🔇 Mute";
+  document.getElementById("muteBtn").innerText = isMuted ? "🎤" : "🔇";
 }
 
 /* =====================
-   SCREEN SHARE
+   SCREEN SHARE (VIDEO ONLY)
 ===================== */
 async function toggleScreen() {
   if (!peerConnection) return;
 
   if (!isScreenSharing) {
     const screenStream = await navigator.mediaDevices.getDisplayMedia({
-      video: true,
-      audio: true
+      video: true
     });
+
+    const screenTrack = screenStream.getVideoTracks()[0];
 
     const videoSender = peerConnection.getSenders()
       .find(s => s.track && s.track.kind === "video");
-    const audioSender = peerConnection.getSenders()
-      .find(s => s.track && s.track.kind === "audio");
 
-    videoSender.replaceTrack(screenStream.getVideoTracks()[0]);
-    if (screenStream.getAudioTracks()[0]) {
-      audioSender.replaceTrack(screenStream.getAudioTracks()[0]);
-    }
-
+    videoSender.replaceTrack(screenTrack);
     document.getElementById("localVideo").srcObject = screenStream;
 
     isScreenSharing = true;
     screenShareSound.play().catch(() => {});
 
-    screenStream.getVideoTracks()[0].onended = stopScreenShare;
+    screenTrack.onended = stopScreenShare;
   } else {
     stopScreenShare();
   }
@@ -254,39 +251,60 @@ function stopScreenShare() {
 
   const videoSender = peerConnection.getSenders()
     .find(s => s.track && s.track.kind === "video");
-  const audioSender = peerConnection.getSenders()
-    .find(s => s.track && s.track.kind === "audio");
 
   videoSender.replaceTrack(cameraStream.getVideoTracks()[0]);
-  audioSender.replaceTrack(cameraStream.getAudioTracks()[0]);
-
   document.getElementById("localVideo").srcObject = cameraStream;
+
   isScreenSharing = false;
 }
 
 /* =====================
-   END CALL
+   END CALL (SYNC)
 ===================== */
 function endCall() {
   callEndSound.play().catch(() => {});
+  socket.emit("end-call", { to: connectedUser });
+  cleanupCall();
+}
 
+socket.on("call-ended", () => {
+  alert("Call ended by other user");
+  cleanupCall();
+});
+
+function cleanupCall() {
   if (peerConnection) {
     peerConnection.close();
     peerConnection = null;
   }
 
   if (localStream) {
-    localStream.getTracks().forEach(track => track.stop());
+    localStream.getTracks().forEach(t => t.stop());
     localStream = null;
   }
 
   document.getElementById("remoteVideo").srcObject = null;
   document.getElementById("localVideo").srcObject = null;
 
-  hideCallStatus();
-  showIdleUI();
-
+  connectedUser = "";
+  inCall = false;
   isMuted = false;
   isScreenSharing = false;
-  inCall = false;
+
+  hideCallStatus();
+  showIdleUI();
+}
+
+async function handleOffer(offer) {
+  await peerConnection.setRemoteDescription(
+    new RTCSessionDescription(offer)
+  );
+
+  const answer = await peerConnection.createAnswer();
+  await peerConnection.setLocalDescription(answer);
+
+  socket.emit("webrtc-answer", {
+    to: connectedUser,
+    answer
+  });
 }
