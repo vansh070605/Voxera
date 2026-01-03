@@ -1,5 +1,7 @@
+<!-- ===================== VOXERA NEURAL BOOT ===================== -->
+
 <p align="center">
-  <img src="https://readme-typing-svg.herokuapp.com?size=36&duration=3000&color=38BDF8&center=true&vCenter=true&width=800&lines=Voxera;Real-Time+Voice+Video+%26+Screen+Sharing;WebRTC+%7C+Socket.IO;Built+for+Seamless+Communication" />
+  <img src="https://readme-typing-svg.herokuapp.com?size=36&duration=3000&color=38BDF8&center=true&vCenter=true&width=900&lines=Voxera;Real-Time+Voice+Video+%26+Screen+Sharing;Powered+by+WebRTC+%7C+Socket.IO;Built+for+Seamless+Communication" />
 </p>
 
 <p align="center">
@@ -9,53 +11,77 @@
   <img src="https://img.shields.io/badge/Status-Active-success?style=for-the-badge">
 </p>
 
+<p align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:38bdf8,100:1e3a8a&height=90&section=header" />
+</p>
+
 ---
 
 # 🎧 Voxera — Real-Time Communication Platform
 
-**Voxera** is a browser-based real-time communication platform that enables **low-latency voice calls, video calls, and screen sharing** directly over the internet.
+> **Talk. See. Share. Instantly.**
 
-Inspired by platforms like **Google Meet**, **Zoom**, and **Discord Voice**, Voxera focuses on **core real-time communication engineering** using modern web technologies.
+**Voxera** is a browser-based **real-time communication platform** that enables  
+📞 **voice calls**, 🎥 **video calls**, and 🖥️ **screen sharing** —  
+all with **ultra-low latency peer-to-peer streaming**.
+
+Inspired by **Google Meet**, **Zoom**, and **Discord Voice**, Voxera focuses on the **engineering fundamentals** behind modern real-time systems rather than relying on third-party SDKs.
 
 ---
 
-## ✨ Live Demo Preview (Add Screenshots/GIFs)
+## ⚡ Why Voxera?
+
+✔ No media server relay  
+✔ Direct peer-to-peer streaming  
+✔ Real-time signaling  
+✔ Clean call lifecycle handling  
+✔ Production-style UI logic  
+
+> Voxera is built to **understand how real-time systems actually work**, not just how to use them.
+
+---
+
+## 🖼️ Live Demo Preview
 
 ```text
 Login → Online Users → Call → Video → Screen Share → End Call
 ````
 
-> 
-![Home Page](image.png)
+<p align="center">
+  <img src="image.png" width="32%" />
+  <img src="image-1.png" width="32%" />
+  <img src="ss.png" width="32%" />
+</p>
 
-![Call Page](image-1.png)
-
-![SS Page](ss.png)
 ---
 
 ## 🚀 Features
 
-### 🔗 Real-Time Communication
+### 🔗 Real-Time Communication Core
 
-* 📞 One-to-one voice & video calls
-* 🖥️ Screen sharing with system audio
-* ⚡ Ultra-low latency peer-to-peer streaming
-* 🔊 Call connect, screen share & call end sounds
-* ❌ Synchronized call ending (ends on both sides)
+* 📞 One-to-one **voice & video calls**
+* 🖥️ **Screen sharing** with system audio
+* ⚡ **Ultra-low latency** peer-to-peer streaming
+* 🔊 Call connect, screen share & end-call sounds
+* ❌ **Synchronized call ending** (ends on both sides)
 
-### 🎛 Call Controls
+---
+
+### 🎛️ Call Controls
 
 * 🎤 Mute / Unmute microphone
 * 🖥️ Start / Stop screen sharing
 * 📞 End call
-* 🪟 Floating camera (Picture-in-Picture)
+* 🪟 Floating camera (**Picture-in-Picture**)
 
-### 🎨 UI & UX
+---
+
+### 🎨 UI & UX Experience
 
 * ✨ Google Meet–inspired professional UI
-* 🌌 Glassmorphism + gradient background
-* 🎥 Smart video layout (screen-first, camera PiP)
-* 🔔 Call status overlays (Calling / Incoming)
+* 🌌 Glassmorphism + gradient backgrounds
+* 🎥 Smart layout (screen-first, camera PiP)
+* 🔔 Call state overlays (Calling / Incoming)
 * 🎧 Idle onboarding screen
 
 ---
@@ -98,11 +124,11 @@ User A  ── WebRTC (Audio / Video / Screen) ──▶  User B
 ### 🎥 WebRTC Handles:
 
 * Peer-to-peer media streaming
-* Microphone & camera capture
+* Camera & microphone capture
 * Screen sharing with system audio
 * NAT traversal via ICE
 
-> ⚠️ Media streams **do not pass through the server** — they flow directly between peers.
+> ⚠️ **Media streams never touch the server** — they flow directly between peers.
 
 ---
 
@@ -160,32 +186,32 @@ Expected output:
 
 ---
 
-## 🎯 Call Flow
+## 🎯 Call Flow Lifecycle
 
 ```text
 Login → Select User → Call → Connect → Share Screen → End Call
 ```
 
-✔ Ending a call on one side **disconnects both users**
+✔ Ending a call on one side disconnects both users
 ✔ UI resets cleanly on both ends
 
 ---
 
 ## 🧪 What This Project Demonstrates
 
-* WebRTC signaling & peer connection setup
-* ICE candidate exchange and NAT traversal
+* WebRTC peer connection setup
+* ICE candidate exchange & NAT traversal
 * Media track replacement (screen sharing)
 * Real-time state synchronization
-* Peer-to-peer networking concepts
-* Production-style UI & call lifecycle management
+* Socket-based signaling
+* Production-grade call lifecycle handling
 
 ---
 
 ## 🔒 Current Limitations
 
 * 🔹 One-to-one calls only
-* 🔹 No TURN server (may fail on strict NATs)
+* 🔹 No TURN server (fails on strict NATs)
 * 🔹 No authentication system
 * 🔹 No call recording
 * 🔹 No group calls (yet)
@@ -206,7 +232,7 @@ Login → Select User → Call → Connect → Share Screen → End Call
 
 ## 📄 Resume-Ready Project Statement
 
-> **Voxera** is a real-time communication web application built using WebRTC and WebSockets that enables peer-to-peer voice calls, video calls, and screen sharing with synchronized call lifecycle management and a modern, production-grade UI.
+> **Voxera** is a real-time communication web application built using **WebRTC and WebSockets** that enables peer-to-peer voice calls, video calls, and screen sharing with synchronized call lifecycle management and a modern, production-grade UI.
 
 ---
 
@@ -220,6 +246,10 @@ Engineering Student | Full-Stack & Real-Time Systems Enthusiast
 ## ⭐ Final Note
 
 Voxera focuses on **real-world real-time communication engineering**, not just UI demos.
-It demonstrates the same foundational concepts used in **Google Meet, Zoom, and Discord** — built completely from scratch.
+It demonstrates the same foundational concepts used in **Google Meet, Zoom, and Discord** —
+**built completely from scratch.**
 
----
+<p align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:1e3a8a,100:38bdf8&height=90&section=footer" />
+</p>
+```
